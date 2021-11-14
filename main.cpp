@@ -209,7 +209,7 @@ void draw3DRays()
             mp = my * map_x + mx;
 
             // if the rays hits an wall
-            if (mp < map_x * map_y && map[mp] == 1)
+            if (mp > 0 && mp < map_x * map_y && map[mp] == 1)
             {
                 dof = 8;
             } else {
@@ -231,11 +231,10 @@ void draw3DRays()
         float nTan = -tan(ray_angle);
   
         // if the player is looking left 
-        if (ray_angle > PI/2 || ray_angle < 1.5*PI)
+        if (ray_angle > PI/2 && ray_angle < 1.5*PI)
         {
             ray_x = (((int)player_x >> 6) << 6) - 0.0001;
             ray_y = (player_x - ray_x) * nTan + player_y;
-  
             xo = -64;
             yo = -xo * nTan;
         }
@@ -243,7 +242,7 @@ void draw3DRays()
         // if the player is looking right
         if (ray_angle < PI/2 || ray_angle > 1.5*PI)
         {
-            ray_x = (((int)player_y >> 6) << 6) + 64;
+            ray_x = (((int)player_x >> 6) << 6) + 64;
             ray_y = (player_x - ray_x) * nTan + player_y;
   
             xo = 64;
@@ -263,9 +262,8 @@ void draw3DRays()
             mx = (int)ray_x >> 6;
             my = (int)ray_y >> 6;
             mp = my * map_x + mx;
-             
             // if the rays hits an wall
-            if (mp < map_x * map_y && map[mp] == 1)
+            if (mp > 0 && mp < map_x * map_y && map[mp] == 1)
             {
                 dof = 8;
             } else {
@@ -274,7 +272,7 @@ void draw3DRays()
                 dof += 1;
             }
         }
-
+        
         glColor3f(RAY_COLOR_2);
         glLineWidth(1);
         glBegin(GL_LINES);
