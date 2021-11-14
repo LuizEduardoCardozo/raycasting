@@ -163,7 +163,7 @@ void draw2DMap()
 
 void draw3DRays()
 {
-    int r, mp, mx, my, dof;
+    int r, mp, mx, my;
     float ray_x, ray_y, ray_angle, xo, yo;
 
     ray_angle = player_angle;
@@ -172,7 +172,7 @@ void draw3DRays()
     for (r = 0; r < 1; r++)
     {
         // Checking for horizontal ray collisions
-        dof = 0;
+        int dof = 0;
         float aTan = -1 / tan(ray_angle);
         
         // if the player is looking up
@@ -257,13 +257,14 @@ void draw3DRays()
             dof = 8;
         }
 
-        while (dof < 8)
+        while (dof < 8) 
         {
             mx = (int)ray_x >> 6;
             my = (int)ray_y >> 6;
             mp = my * map_x + mx;
+            
             // if the rays hits an wall
-            if (mp > 0 && mp < map_x * map_y && map[mp] == 1)
+            if (mp > 0 && mp < map_x * map_y && map[mp] == 1) 
             {
                 dof = 8;
             } else {
