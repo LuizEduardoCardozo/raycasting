@@ -24,13 +24,6 @@
 float player_x, player_y, player_angle;
 float player_dx, player_dy;
 
-/*
-float distance(float ax, float ay, float bx, float by, float angle)
-{
-    return cos(angle)*(bx-ax) - sin(angle)*(by-ay);
-}
-*/
-
 float distance(float ax, float ay, float bx, float by, float angle)
 {
     return sqrt(pow(ax-bx,2) + pow(ay-by,2));
@@ -178,9 +171,9 @@ void draw2DMap()
 void draw3DRays()
 {
     int r, mp, mx, my;
-    float ray_x, ray_y, ray_angle, xo, yo;
-
-    ray_angle = player_angle - DEGREE((int)PLAYER_FOV/2);
+    float ray_x=0, ray_y=0, xo=0, yo=0;
+    
+    float ray_angle = player_angle - DEGREE((int)PLAYER_FOV/2);
 
     // keep ray_angle always beteen 0 and 2 pi
     if(ray_angle < 0) 
