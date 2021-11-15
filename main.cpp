@@ -24,6 +24,18 @@
 float player_x, player_y, player_angle;
 float player_dx, player_dy;
 
+/*
+float distance(float ax, float ay, float bx, float by, float angle)
+{
+    return cos(angle)*(bx-ax) - sin(angle)*(by-ay);
+}
+*/
+
+float distance(float ax, float ay, float bx, float by, float angle)
+{
+    return sqrt(pow(ax-bx,2) + pow(ay-by,2));
+}
+
 void buttons(unsigned char key, int x, int y)
 {
     if (key == 'w')
@@ -181,8 +193,13 @@ void draw3DRays()
     {
         // Checking for horizontal ray collisions
         int dof = 0;
+
         float aTan = -1 / tan(ray_angle);
         
+        float horizontalDistance = 1000000;
+        float horizontal_x = player_x;
+        float horizontal_y = player_y;
+
         // if the player is looking up
         if (ray_angle > PI)
         {
@@ -219,6 +236,11 @@ void draw3DRays()
             // if the rays hits an wall
             if (mp > 0 && mp < map_x * map_y && map[mp] == 1)
             {
+                horizontal_x = ray_x;
+                horizontal_y = ray_y;
+
+                horizontalDistance = distance(player_x, player_y, horizontal_x, horizontal_y, ray_angle);
+
                 dof = 8;
             } else {
                 ray_x += xo;
@@ -227,18 +249,27 @@ void draw3DRays()
             }
 
         }
-
+        
+        // Renders an ray of horizonal scan, useless by now :)
+        // because we will render this if the distance between the
+        // player and the wall is minor than the ray of vertical scan
+        /*
         glColor3f(RAY_COLOR_1);
         glLineWidth(3);
         glBegin(GL_LINES);
         glVertex2i(player_x, player_y);
         glVertex2i(ray_x, ray_y);
         glEnd();
-        
+        */
+
         // Checking for vertical ray collisions
         dof = 0;
         float nTan = -tan(ray_angle);
-  
+ 
+        float verticalDistance = 1000000;
+        float vertical_x = player_x;
+        float vertical_y = player_y;
+
         // if the player is looking left 
         if (ray_angle > PI/2 && ray_angle < 1.5*PI)
         {
@@ -275,12 +306,29 @@ void draw3DRays()
             // if the rays hits an wall
             if (mp > 0 && mp < map_x * map_y && map[mp] == 1) 
             {
+
+                vertical_x = ray_x;
+                vertical_y = ray_y;
+
+                verticalDistance = distance(player_x, player_y, vertical_x, vertical_y, ray_angle);
+
                 dof = 8;
             } else {
                 ray_x += xo;
                 ray_y += yo;
                 dof += 1;
             }
+        }
+
+        if(verticalDistance < horizontalDistance)
+        {
+            ray_x = vertical_x;
+            ray_y = vertical_y;
+        }
+        if( verticalDistance > horizontalDistance )
+        {
+            ray_x = horizontal_x;
+            ray_y = horizontal_y;
         }
         
         glColor3f(RAY_COLOR_2);
