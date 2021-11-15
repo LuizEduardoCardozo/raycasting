@@ -6,9 +6,11 @@
 #include <GL/glut.h>
 
 #define PI 3.14159265359
+#define DEGREE(radians) radians*0.0174533
 
 #define PLAYER_COLOR 1, 1, 0
 #define PLAYER_ROT_VEL 0.1
+#define PLAYER_FOV 60
 
 #define MAP_BORDER_COLOR 1, 1, 1
 #define EMPTY_COLOR 0.3, 0.3, 0.3
@@ -166,10 +168,16 @@ void draw3DRays()
     int r, mp, mx, my;
     float ray_x, ray_y, ray_angle, xo, yo;
 
-    ray_angle = player_angle;
+    ray_angle = player_angle - DEGREE((int)PLAYER_FOV/2);
 
+    // keep ray_angle always beteen 0 and 2 pi
+    if(ray_angle < 0) 
+        ray_angle += 2*PI;
+    if(ray_angle > 2*PI) 
+        ray_angle -= 2*PI; 
+    
     // TODO ADD MORE RAYS (it checks for each ray)
-    for (r = 0; r < 1; r++)
+    for (r = 0; r < PLAYER_FOV; r++)
     {
         // Checking for horizontal ray collisions
         int dof = 0;
@@ -217,6 +225,7 @@ void draw3DRays()
                 ray_y += yo;
                 dof += 1;
             }
+
         }
 
         glColor3f(RAY_COLOR_1);
@@ -280,7 +289,15 @@ void draw3DRays()
         glVertex2i(player_x, player_y);
         glVertex2i(ray_x, ray_y);
         glEnd();
-    }
+
+        ray_angle += DEGREE(1);
+        if(ray_angle < 0)
+            ray_angle += 2*PI;
+        if(ray_angle > 2*PI)
+            ray_angle -= 2*PI;
+
+    } 
+
 }
 
 void drawPlayer()
