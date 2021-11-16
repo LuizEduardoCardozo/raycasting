@@ -172,7 +172,8 @@ void draw3DRays()
 {
     int r, mp, mx, my;
     float ray_x=0, ray_y=0, xo=0, yo=0;
-    
+    float distance_to_wall = 0;
+
     float ray_angle = player_angle - DEGREE((int)PLAYER_FOV/2);
 
     // keep ray_angle always beteen 0 and 2 pi
@@ -317,20 +318,50 @@ void draw3DRays()
         {
             ray_x = vertical_x;
             ray_y = vertical_y;
+
+            distance_to_wall = verticalDistance;
+        
+            glColor3f(0.9,0,0);
         }
         if( verticalDistance > horizontalDistance )
         {
             ray_x = horizontal_x;
             ray_y = horizontal_y;
+            
+            glColor3f(0.7,0,0);
+            distance_to_wall = horizontalDistance;
         }
-        
-        glColor3f(RAY_COLOR_2);
+
         glLineWidth(1);
         glBegin(GL_LINES);
         glVertex2i(player_x, player_y);
         glVertex2i(ray_x, ray_y);
         glEnd();
 
+        // fix the fisheye effect in the camera view
+        float camera_angle = player_angle - ray_angle;
+        if(camera_angle < 0)
+            camera_angle += 2*PI;
+        if(camera_angle > 2*PI)
+            camera_angle -= 2*PI;
+
+        distance_to_wall = distance_to_wall*cos(camera_angle);
+
+        // Draw the 3d walls
+        float line_height = (map_s*300)/distance_to_wall;
+
+        if(line_height > 320)
+            line_height = 320;
+        
+        float line_offset = 160 - line_height/2;
+
+        glLineWidth(8);
+        glBegin(GL_LINES);
+        glVertex2i(r*8+530, line_offset); 
+        glVertex2i(r*8+530, line_height+line_offset); 
+        glEnd();
+
+        // keep ray angle always between 0 and 2 pi
         ray_angle += DEGREE(1);
         if(ray_angle < 0)
             ray_angle += 2*PI;
